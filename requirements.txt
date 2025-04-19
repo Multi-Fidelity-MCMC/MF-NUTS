@@ -1,0 +1,11 @@
+# python -m pip install --requirement requirements.txt
+# pip install -U "jax[cuda12]"
+
+ipykernel
+numpy
+matplotlib
+jax
+jaxlib
+scipy
+seaborn
+tqdm
