@@ -31,7 +31,7 @@ def algorithm_name(epsilon, model_labels):
 
 
 def convert_seconds(seconds):
-    """ Used in plot_stats() """
+    """ Helper function used in plot_stats() """
     h = seconds // (60 * 60)
     m = (seconds - h * 60 * 60) // 60
     s = seconds - (h * 60 * 60) - (m * 60)
@@ -1061,81 +1061,3 @@ def plot_low_fidelity_chain_comparison(filename, save_filename, good_chains, bad
     if save_filename:
         plt.savefig(save_filename, bbox_inches='tight')
     plt.show() 
-
-
-def plot_prior_pushthrough(filename, save_filename=None, bw_adjust=1):
-    """ Plot the observations of the prior passed through the forward model """
-    
-    data = np.load(filename, allow_pickle=True)
-    all_chain_obs = data.item().get('evaluations')
-
-    # For single chains, we need to add a dimension
-    if len(all_chain_obs.shape) <= 3:
-        all_chain_obs = np.expand_dims(all_chain_obs, axis=0)
-
-    full_obs = np.vstack(all_chain_obs)
-    obs_len = wave_specs.OBS_VALS.shape[0]
-
-    upper = np.percentile(full_obs, 95, axis=0)
-    lower = np.percentile(full_obs, 5, axis=0)
-
-    fig = plt.figure(figsize=(20, 8))
-
-    for i in range(obs_len):
-
-        ax1 = plt.subplot2grid((2, obs_len), (0, i))
-        ax2 = plt.subplot2grid((2, obs_len), (1, i))
-
-        # Plot histogram or kde plot for each chain
-        for j in range(all_chain_obs.shape[0]): 
-            sns.kdeplot(all_chain_obs[j][:,i], alpha=0.5, bw_adjust=bw_adjust, ax=ax1)
-
-        # Plot kde for all data
-        axs = sns.kdeplot(full_obs[:,i], color='r', linewidth=3, label="KDE Plot Over All Chains", bw_adjust=bw_adjust, ax=ax1)
-        x, y = axs.lines[-1].get_data()
-
-        ax1.axvline(x=lower[i], color="k", label="95% Confidence Interval", linewidth=0.5)
-        ax1.axvline(x=wave_specs.OBS_VALS[i], linestyle=':', color='purple', linewidth=2, label="True Observation")
-        ax1.axvline(x=upper[i], color="k", linewidth=0.5)
-        ax1.set_title(OBSERVATION_LABELS[i] + f' MAP: {round(x[y == np.max(y)][0], 3)}', fontsize=22)
-
-        # Plot histogram or kde plot for each chain
-        for j in range(all_chain_obs.shape[0]): 
-            sns.kdeplot(all_chain_obs[j][:,i+obs_len], alpha=0.5, bw_adjust=bw_adjust, ax=ax2)
-
-        # Plot kde for all data
-        axs = sns.kdeplot(full_obs[:, i+obs_len], color='r', linewidth=3, label="KDE Plot Over All Chains", bw_adjust=bw_adjust, ax=ax2, warn_singular=False)
-
-        if not np.isclose(np.var(full_obs[:, i+obs_len]) , 0.):
-            x ,y = axs.lines[-1].get_data()
-        else:
-            x = full_obs[:, i+obs_len]
-            y = full_obs[:, i+obs_len]
-
-        obs_time_secs = (wave_specs.OBS_TIMES[i] + 1) / wave_specs.TIMESTEPS * wave_specs.T
-
-        ax2.axvline(x=lower[i+obs_len], color="k", label="95% Confidence Interval", linewidth=0.5)
-        ax2.axvline(x=obs_time_secs, linestyle=':', color='purple', linewidth=2, label="True Observation")
-        ax2.axvline(x=upper[i+obs_len], color="k", linewidth=0.5)
-        ax2.set_title(OBSERVATION_LABELS[i+obs_len] + f' MAP: {round(x[y == np.max(y)][0], 3)}', fontsize=22)
-
-        # Only label the outer-most subplots
-        if i != 0:
-            ax1.set_ylabel(None)
-            ax2.set_ylabel(None)
-
-    # Get labels and handles from the plots
-    handles, labels = ax1.get_legend_handles_labels()
-    by_label = dict(zip(labels, handles))
-
-    fig.legend(by_label.values(), by_label.keys(),
-        loc="center", bbox_to_anchor=(0.75, 0.15),
-        ncol=2, fontsize=20, framealpha=1.0)
-
-    plt.tight_layout()
-    fig.subplots_adjust(bottom=0.28, hspace=0.4)
-
-    if save_filename:
-        plt.savefig(save_filename, bbox_inches='tight')
-    plt.show()   
-
