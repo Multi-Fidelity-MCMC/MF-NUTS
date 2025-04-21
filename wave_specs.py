@@ -20,11 +20,25 @@ LL_COV_DIAG = None
 
 
 def init(variable_filename):
-    """ Load in global model variables from specified file """
+    """Load in global model variables from specified file"""
 
-    global TRUE_PARAMETERS, XMIN, XMAX, YMIN, YMAX, T, TIMESTEPS, \
-        BUOY_RATS, OBS_VALS, OBS_TIMES, ALL_OBS, PRIOR_MEAN, PRIOR_COV_DIAG, \
-        PRIOR_A, PRIOR_B, LL_COV_DIAG
+    global \
+        TRUE_PARAMETERS, \
+        XMIN, \
+        XMAX, \
+        YMIN, \
+        YMAX, \
+        T, \
+        TIMESTEPS, \
+        BUOY_RATS, \
+        OBS_VALS, \
+        OBS_TIMES, \
+        ALL_OBS, \
+        PRIOR_MEAN, \
+        PRIOR_COV_DIAG, \
+        PRIOR_A, \
+        PRIOR_B, \
+        LL_COV_DIAG
 
     dict = np.load(variable_filename, allow_pickle=True)
 
@@ -44,5 +58,3 @@ def init(variable_filename):
     PRIOR_A = dict.item().get("PRIOR_A")
     PRIOR_B = dict.item().get("PRIOR_B")
     LL_COV_DIAG = dict.item().get("LL_COV_DIAG")
-
-

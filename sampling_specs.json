@@ -1,13 +1,13 @@
 {
     "n_chains": 3,
-    "n_samples": 10,
+    "n_samples": 10000,
     "grid_sizes": [75, 150],
     "initial_sample": "random",
-    "save_filename": "quick_test.npy",
+    "save_filename": "mf_nuts_5chains10k.npy",
     "matrix_adapt_start": 25,
     "nuts": true,
     "target_acceptance": 0.65,
-    "epsilon_adapt": 5,
-    "SIR_stages": 0,
-    "n_SIR_samples": 0
+    "epsilon_adapt": 5000,
+    "SIR_stages": 3,
+    "n_SIR_samples": 5000
 }
