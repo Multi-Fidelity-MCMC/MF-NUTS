@@ -1,7 +1,7 @@
 # Repository Overview
 
 This repository contains the code for Multi-Fidelity No-U-Turn Sampling (MF-NUTS) as well as Multi-Fidelity Random-Walk (MF-RW) and their application against an inverse wave problem.
-This overview will describe everything one needs to know to use the code in this repository.
+This overview will describe everything needed to start working with this repository.
 
 ## Setup
 
